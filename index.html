@@ -4,18 +4,41 @@
   <meta charset="utf-8">
   <script src="http://d3js.org/d3.v3.min.js"></script>
     <style>
+    div.question_button {
+      position: fixed;
+      top: 110px;
+      left: 50px;
+    } 
+
+    div.question_button div {
+      background-color: rgb(34, 243, 236);
+      padding: 3px;
+      margin: 7px;
+    }
+
+    h2 {
+        text-align: center;
+        color: black;
+      }
     </style>
     <script type="text/javascript">  
+
+
 
       var color = d3.scale.ordinal()
                     .range(['green','red','orange']);
 
 
       function draw(geo_data) {
+
+        d3.select("body")
+          .append("h2")
+          .text("Global Views on Morality and Marriage");
+
         "use strict";
         var margin = 75,
             width = 1400 - margin,
-            height = 600 - margin;
+            height = 650 - margin;
 
         var svg = d3.select("body")
             .append("svg")
@@ -26,7 +49,7 @@
 
         var projection = d3.geo.mercator()
                                .scale(260)
-                               .translate([width / 2, height / 1.3]);                    
+                               .translate([width / 2, height / 1.35]);                    
 
         var path = d3.geo.path().projection(projection);
 
@@ -37,44 +60,159 @@
                      .attr('d', path)
                      .style('fill', 'lightGrey')
                      .style('stroke', 'black')
-                     .style('stroke-width', 0.5);
+                     .style('stroke-width', 0.5)
+                     .style("opacity",0.7);
 
-
-
-
-
-        function plot_bars(data) {
-          
-          var data = data.filter(function(d){
-            return d['question'] === 'unmarried';
-          });
-          
-          var answers = d3.layout.stack()(
-            ["acceptable","unacceptable","not an issue"].map(function(answer){
-              return data.map(function(d){
-                return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
-              });
-            })
-            );
-          
-          //add legends
+        //add text
           var legend = svg.append("g")
             .attr("class", "legend");
 
-          legend.append("rect")
-              .attr("x", 50)
-              .attr("y",5)
-              .attr("width", 20)
-              .attr("height", 10)
-              .style("fill", 'red');
 
           legend.append("text")
               .attr("x", 130)
               .attr("y", 9)
               .attr("dy", ".35em")
               .style("text-anchor", "end")
-              .text(function(d) { return "divorce"; });
+              .text(function(d) { return "Select a question:"; });
 
+          legend.append("text")
+              .attr("x", 130)
+              .attr("y", 30)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return "Do you think..."; });
+          legend.append("text")
+              .attr("x", 200)
+              .attr("y", 150)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return "...is/are morally acceptable?"; });
+
+
+        
+
+        var questions = ["unmarried","divorce","affair"];
+
+
+      
+
+
+        function plot_bars(data) {
+
+          //var selected_question = 'unmarried';
+
+          function new_question(data,q){
+
+            var data = data.filter(function(d){
+              return d['question'] === q;
+             });
+
+            var answers = d3.layout.stack()(
+            ["acceptable","unacceptable","not a moral issue"].map(function(answer){
+              return data.map(function(d){
+                return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
+              });
+            })
+            );
+
+            var answer = svg.selectAll("g.answer")
+                            .data(answers);
+
+            answer.exit().remove();
+
+            var rect = answer.selectAll("rect")
+                             .data(Object);
+            rect.remove();
+
+            answer.enter()
+                  .append("svg:g")
+                  .attr("class","answer")
+                  .style("fill", function(d, i) { 
+                    return color(i); 
+                  });
+          
+            var bar_width = 8;
+            //Add a rect for each date
+            var rect = answer.selectAll("rect")
+                             .data(Object);
+            rect.enter()
+                 .append("svg:rect")
+                 .attr("x",function(d){
+                  return projection([d.x[0],d.x[1]])[0] - bar_width/2;
+                 })
+                 .attr("y",function(d){
+                  return projection([d.x[0],d.x[1]])[1] -d.y - d.y0;
+                 })
+                 .attr("height",function(d){
+                  return d.y;
+                 })
+                 .attr("width",bar_width)
+                 .attr("opacity",0.9)
+                 .attr("stroke",'grey')
+                 .attr("stroke-width",0.7)
+                 .on("mouseover",function(d){
+                    var xPos = parseFloat(d3.select(this).attr("x"));
+                    var yPos = parseFloat(d3.select(this).attr("y"));
+                    var height = parseFloat(d3.select(this).attr("height"))
+                            
+                    d3.select(this).attr("stroke-width",1)
+                                   .attr("stroke","black");             
+                    svg.append("text")
+                      .attr("class","tooltip")
+                      .attr("x",xPos + 20)
+                      .attr("y",yPos +height/2)
+                      .text(d.country+": "+d.answer + ": " + d.y +"%");
+                 })
+                 .on("mouseout",function(){
+                    d3.select(this).attr("stroke-width",0.7)
+                                   .attr("stroke","grey");  
+                    svg.select(".tooltip").remove();
+                 });
+
+          }
+
+          var buttons = d3.select("body")
+                          .append("div")
+                          .attr("class","question_button")
+                          .selectAll("div")
+                          .data(questions)
+                          .enter()
+                          .append("div")
+                          .text(function(d){
+                            if (d === "unmarried"){return "premarital sex";}
+                            else if (d === "affair"){return "extramarital affairs";}
+                            else {return d;}
+                          })
+                          .style("background",function(d){
+                            if (d === "unmarried"){return "rgb(30,165,160)";}
+                          });
+
+          buttons.on("click",function(d){
+            d3.select(".question_button")
+              .selectAll("div")
+              .transition()
+              .duration(200)
+              .style("background","rgb(34, 243, 236)");
+
+            d3.select(this)
+              .transition()
+              .duration(200)
+              .style("background","rgb(30,165,160)");
+            new_question(data,d);
+          });
+
+          var data2 = data.filter(function(d){
+            return d['question'] === "unmarried"; //first question
+          });
+          
+
+          var answers = d3.layout.stack()(
+            ["acceptable","unacceptable","not a moral issue"].map(function(answer){
+              return data2.map(function(d){
+                return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
+              });
+            })
+            );
 
             //plot bars
 
@@ -126,70 +264,13 @@
                                 svg.select(".tooltip").remove();
                              });
             
-                        
-            
-            /*
-            function agg_year(leaves) {
-                var total = d3.sum(leaves, function(d) {
-                    return d['attendance'];
-                });
 
-                var coords = leaves.map(function(d) {
-                    return projection([+d.long, +d.lat]);
-                });
-
-                var center_x = d3.mean(coords, function(d) {
-                    return d[0];
-                });
-
-                var center_y = d3.mean(coords, function(d) {
-                    return d[1];
-                });
-
-                return {
-                  'attendance' : total,
-                  'x' : center_x,
-                  'y' : center_y
-                };
-            }
-
-            var nested = d3.nest()
-                           .key(function(d) {
-                              return d['date'].getUTCFullYear();
-                           })
-                           .rollup(agg_year)
-                           .entries(data);
-
-            var attendance_max = d3.max(nested, function(d) {
-                return d.values['attendance'];
-            });
-
-            var radius = d3.scale.sqrt()
-                           .domain([0, attendance_max])
-                           .range([0, 15]);
-
-            svg.append('g')
-               .attr("class", "bubble")
-               .selectAll("circle")
-               .data(nested)
-               .enter()
-               .append("circle")
-               .attr('cx', function(d) { return d.values['x']; })
-               .attr('cy', function(d) { return d.values['y']; })
-               .attr('r', function(d) {
-                    return radius(d.values['attendance']);
-               })
-               .attr('fill', 'rgb(247, 148, 32)')
-               .attr('stroke', 'black')
-               .attr('stroke-width', 0.7)
-               .attr('opacity', 0.7);
-               debugger;
-            */
         }
 
+        
+        
         //var format = d3.time.format("%d-%m-%Y (%H:%M h)");
-
-        d3.csv("data_final_geo_3.csv", plot_bars);
+        d3.csv("data_final_geo_3.csv",plot_bars);
       };
       </script>
   </head>
@@ -199,7 +280,7 @@
     Use D3 to load the GeoJSON file
     */
     
-d3.json("world_countries.json", draw);
+    d3.json("world_countries.json", draw);
   </script>
 </body>
 </html>
