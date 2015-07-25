@@ -16,6 +16,18 @@
       margin: 7px;
     }
 
+    div.region_button {
+      position: fixed;
+      top: 350px;
+      left: 50px;
+    } 
+
+    div.region_button div {
+      background-color: rgb(34, 243, 236);
+      padding: 3px;
+      margin: 7px;
+    }
+
     h2 {
         text-align: center;
         color: black;
@@ -49,6 +61,7 @@
 
         var projection = d3.geo.mercator()
                                .scale(260)
+                               .rotate([0,0,0])
                                .translate([width / 2, height / 1.35]);                    
 
         var path = d3.geo.path().projection(projection);
@@ -73,6 +86,7 @@
               .attr("y", 9)
               .attr("dy", ".35em")
               .style("text-anchor", "end")
+              .style("font-weight", "bold")
               .text(function(d) { return "Select a question:"; });
 
           legend.append("text")
@@ -82,50 +96,124 @@
               .style("text-anchor", "end")
               .text(function(d) { return "Do you think..."; });
           legend.append("text")
-              .attr("x", 200)
+              .attr("x", 85)
               .attr("y", 150)
               .attr("dy", ".35em")
               .style("text-anchor", "end")
-              .text(function(d) { return "...is/are morally acceptable?"; });
+              .text(function(d) { return "...is/are..."; });
+          
+          legend.append("circle")
+              .attr("cx", 55)
+              .attr("cy",175)
+              .attr("r", 6)
+              .style("fill", 'green');
 
+          legend.append("text")
+              .attr("x", 80)
+              .attr("y", 175)
+              .attr("dy", ".35em")
+              .text(function(d) { return "morally acceptable"; });
+
+          legend.append("circle")
+              .attr("cx", 55)
+              .attr("cy",195)
+              .attr("r", 6)
+              .style("fill", 'red');
+
+          legend.append("text")
+              .attr("x", 80)
+              .attr("y", 195)
+              .attr("dy", ".35em")
+              .text(function(d) { return "morally unacceptable"; });
+
+          legend.append("circle")
+              .attr("cx", 55)
+              .attr("cy",215)
+              .attr("r", 6)
+              .style("fill", 'orange');
+
+          legend.append("text")
+              .attr("x", 80)
+              .attr("y", 215)
+              .attr("dy", ".35em")
+              .text(function(d) { return "not a moral issue?"; });
+
+          legend.append("text")
+              .attr("x", 130)
+              .attr("y", 260)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .style("font-weight", "bold")
+              .text(function(d) { return "Select a region:"; });
 
         
-
+        //Information to choose from (questions and regions):
         var questions = ["unmarried","divorce","affair"];
 
+        var regions = ["All","Asia","Europe","Latin America","North America", "Middle East","Sub-Saharan Africa"];
 
+        var NorthAmerica = ["United States","Canada"];
+        var Asia = ["Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India"];
+        var Europe = ["Greece","Britain","Poland","Russia","Czech Republic","Italy","Spain","Germany","France"];
+        var LatinAmerica = ["El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile"];
+        var MiddleEast = ["Palest. ter.","Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel"];
+        var SubAfrica = ["Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
+        var All = ["United States","Canada","Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India","Greece","Britain","Poland","Russia","Czech Republic","Italy","Spain","Germany","France","El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile","Palest. ter.","Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel","Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
+
+        var sel_question = "unmarried";
+        var sel_region = "All";
       
 
 
         function plot_bars(data) {
+          //intial plotting of bars with default values sel_question and sel_region
 
-          //var selected_question = 'unmarried';
+          function update(data,q,r){
+            //update the bars with new question (q) and region (r):
 
-          function new_question(data,q){
+            //filter data
+            var data2 = data.filter(function(d){
 
-            var data = data.filter(function(d){
               return d['question'] === q;
-             });
+             })
+            .filter(function(d){
+              if(r === "North America"){
+                return (NorthAmerica.indexOf(d['country']) !== -1);
+              } else if(r === "Asia"){
+                return (Asia.indexOf(d['country']) !== -1);
+              } else if(r === "Europe"){
+                return (Europe.indexOf(d['country']) !== -1);
+              } else if(r === "Latin America"){
+                return (LatinAmerica.indexOf(d['country']) !== -1);
+              } else if(r === "Middle East"){
+                return (MiddleEast.indexOf(d['country']) !== -1);
+              } else if(r === "Sub-Saharan Africa"){
+                return (SubAfrica.indexOf(d['country']) !== -1);
+              } else if(r === "All"){
+                return (All.indexOf(d['country']) !== -1);
+              }
+            });
 
             var answers = d3.layout.stack()(
             ["acceptable","unacceptable","not a moral issue"].map(function(answer){
-              return data.map(function(d){
+              return data2.map(function(d){
                 return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
               });
             })
             );
 
+            //remove all old bars
+            svg.selectAll("rect").remove();
+
+
             var answer = svg.selectAll("g.answer")
                             .data(answers);
 
-            answer.exit().remove();
-
             var rect = answer.selectAll("rect")
                              .data(Object);
-            rect.remove();
-
+            
             answer.enter()
-                  .append("svg:g")
+                  .append("g")
                   .attr("class","answer")
                   .style("fill", function(d, i) { 
                     return color(i); 
@@ -134,104 +222,9 @@
             var bar_width = 8;
             //Add a rect for each date
             var rect = answer.selectAll("rect")
-                             .data(Object);
-            rect.enter()
-                 .append("svg:rect")
-                 .attr("x",function(d){
-                  return projection([d.x[0],d.x[1]])[0] - bar_width/2;
-                 })
-                 .attr("y",function(d){
-                  return projection([d.x[0],d.x[1]])[1] -d.y - d.y0;
-                 })
-                 .attr("height",function(d){
-                  return d.y;
-                 })
-                 .attr("width",bar_width)
-                 .attr("opacity",0.9)
-                 .attr("stroke",'grey')
-                 .attr("stroke-width",0.7)
-                 .on("mouseover",function(d){
-                    var xPos = parseFloat(d3.select(this).attr("x"));
-                    var yPos = parseFloat(d3.select(this).attr("y"));
-                    var height = parseFloat(d3.select(this).attr("height"))
-                            
-                    d3.select(this).attr("stroke-width",1)
-                                   .attr("stroke","black");             
-                    svg.append("text")
-                      .attr("class","tooltip")
-                      .attr("x",xPos + 20)
-                      .attr("y",yPos +height/2)
-                      .text(d.country+": "+d.answer + ": " + d.y +"%");
-                 })
-                 .on("mouseout",function(){
-                    d3.select(this).attr("stroke-width",0.7)
-                                   .attr("stroke","grey");  
-                    svg.select(".tooltip").remove();
-                 });
-
-          }
-
-          var buttons = d3.select("body")
-                          .append("div")
-                          .attr("class","question_button")
-                          .selectAll("div")
-                          .data(questions)
-                          .enter()
-                          .append("div")
-                          .text(function(d){
-                            if (d === "unmarried"){return "premarital sex";}
-                            else if (d === "affair"){return "extramarital affairs";}
-                            else {return d;}
-                          })
-                          .style("background",function(d){
-                            if (d === "unmarried"){return "rgb(30,165,160)";}
-                          });
-
-          buttons.on("click",function(d){
-            d3.select(".question_button")
-              .selectAll("div")
-              .transition()
-              .duration(200)
-              .style("background","rgb(34, 243, 236)");
-
-            d3.select(this)
-              .transition()
-              .duration(200)
-              .style("background","rgb(30,165,160)");
-            new_question(data,d);
-          });
-
-          var data2 = data.filter(function(d){
-            return d['question'] === "unmarried"; //first question
-          });
-          
-
-          var answers = d3.layout.stack()(
-            ["acceptable","unacceptable","not a moral issue"].map(function(answer){
-              return data2.map(function(d){
-                return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
-              });
-            })
-            );
-
-            //plot bars
-
-            //Add a group for each answer
-            var answer = svg.selectAll("g.answer")
-                            .data(answers)
-                            .enter()
-                            .append("svg:g")
-                            .attr("class","answer")
-                            .style("fill", function(d, i) { 
-                              return color(i); 
-                            });
-          
-            var bar_width = 8;
-            //Add a rect for each date
-            var rect = answer.selectAll("rect")
                              .data(Object)
                              .enter()
-                             .append("svg:rect")
+                             .append("rect")
                              .attr("x",function(d){
                               return projection([d.x[0],d.x[1]])[0] - bar_width/2;
                              })
@@ -242,7 +235,7 @@
                               return d.y;
                              })
                              .attr("width",bar_width)
-                             .attr("opacity",0.9)
+                             .attr("opacity",0.7)
                              .attr("stroke",'grey')
                              .attr("stroke-width",0.7)
                              .on("mouseover",function(d){
@@ -259,6 +252,143 @@
                                   .text(d.country+": "+d.answer + ": " + d.y +"%");
                              })
                              .on("mouseout",function(){
+                                d3.select(this).attr("stroke-width",0.7)
+                                               .attr("stroke","grey");  
+                                svg.select(".tooltip").remove();
+                             });
+
+          }
+
+
+
+          //Start>Create buttons to select a region://
+          var buttons = d3.select("body")
+                          .append("div")
+                          .attr("class","region_button")
+                          .selectAll("div")
+                          .data(regions)
+                          .enter()
+                          .append("div")
+                          .text(function(d){
+                            return d;
+                          })
+                          .style("background",function(d){
+                            if (d === sel_region){return "rgb(30,165,160)";}
+                          });
+          //set color for selected region button and update map
+          buttons.on("click",function(d){
+            d3.select(".region_button")
+              .selectAll("div")
+              .transition()
+              .duration(300)
+              .style("background","rgb(34, 243, 236)");
+
+            d3.select(this)
+              .transition()
+              .duration(300)
+              .style("background","rgb(30,165,160)");
+            sel_region = d;
+            update(data,sel_question,d); //update function for new region
+          });
+          //End>region buttons//
+
+
+          //Start>Create buttons to select a question://
+          var buttons = d3.select("body")
+                          .append("div")
+                          .attr("class","question_button")
+                          .selectAll("div")
+                          .data(questions)
+                          .enter()
+                          .append("div")
+                          .text(function(d){
+                            if (d === "unmarried"){return "premarital sex";}
+                            else if (d === "affair"){return "extramarital affairs";}
+                            else {return d;}
+                          })
+                          .style("background",function(d){
+                            if (d === sel_question){return "rgb(30,165,160)";}
+                          });
+          //set color for selected question button and update map
+          buttons.on("click",function(d){
+            d3.select(".question_button")
+              .selectAll("div")
+              .transition()
+              .duration(300)
+              .style("background","rgb(34, 243, 236)");
+
+            d3.select(this)
+              .transition()
+              .duration(300)
+              .style("background","rgb(30,165,160)");
+            sel_question = d;
+            update(data,d,sel_region); //update function for new question
+          });
+          //End>question buttons//
+
+
+          //set "unmarried" as default question
+          var data2 = data.filter(function(d){
+            return d['question'] === "unmarried"; //first question
+          });
+          
+          //create stacked layout per country and selected question
+          var answers = d3.layout.stack()(
+            ["acceptable","unacceptable","not a moral issue"].map(function(answer){
+              return data2.map(function(d){
+                return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
+              });
+            })
+            );
+
+
+            //plot bars
+
+            //Add a group for each answer
+            var answer = svg.selectAll("g.answer")
+                            .data(answers)
+                            .enter()
+                            .append("svg:g")
+                            .attr("class","answer")
+                            .style("fill", function(d, i) { 
+                              return color(i); 
+                            });
+          
+            //set bar width
+            var bar_width = 8;
+
+            //Add stacked bars for each country
+            var rect = answer.selectAll("rect")
+                             .data(Object) //access Object of stack model data
+                             .enter()
+                             .append("svg:rect")
+                             .attr("x",function(d){
+                              return projection([d.x[0],d.x[1]])[0] - bar_width/2;
+                             })
+                             .attr("y",function(d){
+                              return projection([d.x[0],d.x[1]])[1] -d.y - d.y0;
+                             })
+                             .attr("height",function(d){
+                              return d.y;
+                             })
+                             .attr("width",bar_width)
+                             .attr("opacity",0.7)
+                             .attr("stroke",'grey')
+                             .attr("stroke-width",0.7)
+                             .on("mouseover",function(d){ //display number values and country information
+                                var xPos = parseFloat(d3.select(this).attr("x"));
+                                var yPos = parseFloat(d3.select(this).attr("y"));
+                                var height = parseFloat(d3.select(this).attr("height"))
+                                        
+                                d3.select(this).attr("stroke-width",1)
+                                               .attr("stroke","black");             
+                                svg.append("text")
+                                  .attr("class","tooltip")
+                                  .attr("x",xPos + 20)
+                                  .attr("y",yPos +height/2)
+                                  .text(d.country+": "+d.answer + ": " + d.y +"%");
+                             })
+                             .on("mouseout",function(){ //reset bar layout
                                 d3.select(this).attr("stroke-width",0.7)
                                                .attr("stroke","grey");  
                                 svg.select(".tooltip").remove();

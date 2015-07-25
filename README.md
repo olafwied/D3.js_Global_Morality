@@ -13,11 +13,12 @@ premaritial sex
 2) not acceptable or 
 3) not a moral issue?" 
 
-Source: http://www.pewglobal.org/2014/04/15/global-morality/
+
+Source: http://www.pewglobal.org/2014/04/15/global-morality/ (there are a lot more questions)
 
 Design: 
 
-To demonstrate the dependence on the country of origin the data is shown on a map. As the responses are given in percentages (limited by 100%), I used stacked bars and traffic ligt like colors to visualize the different proportions.
+To demonstrate the dependence on the country of origin the data is shown on a map. As the responses are given in percentages (limited by 100%), I used stacked bars and traffic light like colors to visualize the different proportions.
 
 Feedback: tbd
 

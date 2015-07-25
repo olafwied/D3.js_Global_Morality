@@ -1,7 +1,7 @@
 country,question,acceptable,unacceptable,not a moral issue,depends,refused,longitude,latitude
-United States  ,divorce,33,22,36,6,2,-77.02,39.91
-United States  ,affair,4,84,10,1,2,-77.02,39.91
-United States  ,unmarried,29,30,36,1,3,-77.02,39.91
+United States,divorce,33,22,36,6,2,-77.02,39.91
+United States,affair,4,84,10,1,2,-77.02,39.91
+United States,unmarried,29,30,36,1,3,-77.02,39.91
 Canada,divorce,37,9,47,5,2,-75.42,45.27
 Canada,affair,4,76,17,1,2,-75.42,45.27
 Canada,unmarried,34,15,47,1,2,-75.42,45.27
@@ -38,78 +38,78 @@ Turkey,unmarried,5,91,2,1,1,32.54,39.57
 Egypt,divorce,51,7,30,11,1,31.14,30.01
 Egypt,affair,2,93,4,0,1,31.14,30.01
 Egypt,unmarried,2,90,6,1,0,31.14,30.01
-Jordan  ,divorce,54,6,29,10,2,35.52,31.57
-Jordan  ,affair,1,93,5,0,1,35.52,31.57
-Jordan  ,unmarried,1,95,3,0,0,35.52,31.57
-Lebanon  ,divorce,48,9,28,13,2,35.31,33.53
-Lebanon  ,affair,0,92,3,3,2,35.31,33.53
-Lebanon  ,unmarried,5,81,8,3,2,35.31,33.53
-Palest. ter.  ,divorce,27,23,27,22,1,35.1,31.35
-Palest. ter.  ,affair,1,94,4,1,1,35.1,31.35
-Palest. ter.  ,unmarried,1,94,4,0,1,35.1,31.35
-Tunisia  ,divorce,16,46,22,15,1,10.11,36.5
-Tunisia  ,affair,3,90,4,3,1,10.11,36.5
-Tunisia  ,unmarried,4,89,3,2,1,10.11,36.5
-Israel  ,divorce,33,23,34,11,0,34.3,31.71
-Israel  ,affair,11,73,13,3,1,34.3,31.71
-Israel  ,unmarried,36,37,22,3,2,34.3,31.71
-Australia  ,divorce,43,9,43,3,1,149.08,-35.15
-Australia  ,affair,4,79,13,3,1,149.08,-35.15
-Australia  ,unmarried,34,15,47,1,2,149.08,-35.15
-China  ,divorce,45,25,18,9,3,116.2,39.55
-China  ,affair,8,74,12,3,3,116.2,39.55
-China  ,unmarried,12,58,17,6,7,116.2,39.55
-Indonesia  ,divorce,20,57,10,13,0,106.49,-6.09
-Indonesia  ,affair,1,93,4,2,0,106.49,-6.09
-Indonesia  ,unmarried,1,97,1,1,0,106.49,-6.09
-Japan  ,divorce,55,13,27,3,2,139.46,35.42
-Japan  ,affair,12,69,14,1,4,139.46,35.42
-Japan  ,unmarried,47,21,26,2,4,139.46,35.42
-Malaysia  ,divorce,16,45,22,15,1,101.41,3.09
-Malaysia  ,affair,2,90,6,2,1,101.41,3.09
-Malaysia  ,unmarried,3,87,5,3,1,101.41,3.09
-Pakistan  ,divorce,10,73,5,12,1,73.1,33.4
-Pakistan  ,affair,0,92,3,0,4,73.1,33.4
-Pakistan  ,unmarried,0,94,2,0,3,73.1,33.4
-Philippines  ,divorce,25,67,7,1,0,121.03,14.4
-Philippines  ,affair,5,90,4,1,0,121.03,14.4
-Philippines  ,unmarried,20,71,7,1,0,121.03,14.4
-South Korea  ,divorce,32,25,29,13,1,126.58,37.33
-South Korea  ,affair,8,81,8,2,0,126.58,37.33
-South Korea  ,unmarried,27,35,29,6,2,126.58,37.33
-Argentina  ,divorce,60,17,20,2,1,-60,-36.3
-Argentina  ,affair,11,72,12,3,1,-60,-36.3
-Argentina  ,unmarried,45,22,27,3,2,-60,-36.3
-Bolivia  ,divorce,29,49,10,9,2,-68.1,-16.2
-Bolivia  ,affair,7,84,6,3,1,-68.1,-16.2
-Bolivia  ,unmarried,22,53,11,8,7,-68.1,-16.2
-Brazil  ,divorce,62,24,10,4,0,-47.55,-15.47
-Brazil  ,affair,6,84,9,1,1,-47.55,-15.47
-Brazil  ,unmarried,47,35,14,3,0,-47.55,-15.47
-Chile  ,divorce,64,17,16,1,1,-70.4,-33.24
-Chile  ,affair,13,67,16,3,2,-70.4,-33.24
-Chile  ,unmarried,54,13,26,6,2,-70.4,-33.24
-El Salvador  ,divorce,30,48,9,11,1,-89.1,13.4
-El Salvador  ,affair,4,89,4,2,0,-89.1,13.4
-El Salvador  ,unmarried,22,56,14,7,0,-89.1,13.4
-Mexico  ,divorce,41,33,16,7,3,-99.1,19.2
-Mexico  ,affair,9,73,12,4,2,-99.1,19.2
-Mexico  ,unmarried,26,44,21,7,3,-99.1,19.2
-Venezuela  ,divorce,58,24,8,9,1,-66.55,10.3
-Venezuela  ,affair,12,76,9,2,2,-66.55,10.3
-Venezuela  ,unmarried,61,21,13,4,2,-66.55,10.3
-Ghana  ,divorce,10,80,2,8,1,-0.06,5.35
-Ghana  ,affair,10,86,2,2,0,-0.06,5.35
-Ghana  ,unmarried,6,86,4,3,1,-0.06,5.35
-Kenya  ,divorce,17,59,13,10,1,36.48,-1.17
-Kenya  ,affair,8,80,7,3,1,36.48,-1.17
-Kenya  ,unmarried,4,79,13,3,1,36.48,-1.17
-Nigeria  ,divorce,12,61,12,13,1,7.32,9.05
-Nigeria  ,affair,7,77,12,3,1,7.32,9.05
-Nigeria  ,unmarried,3,77,13,6,2,7.32,9.05
-Senegal  ,divorce,35,32,16,17,1,-17.29,14.34
-Senegal  ,affair,5,68,24,2,1,-17.29,14.34
-Senegal  ,unmarried,6,63,26,4,1,-17.29,14.34
-South Africa  ,divorce,16,40,15,27,2,28.12,-25.44
-South Africa  ,affair,11,65,11,11,2,28.12,-25.44
-South Africa  ,unmarried,21,48,17,11,2,28.12,-25.44
+Jordan,divorce,54,6,29,10,2,37.52,31.57
+Jordan,affair,1,93,5,0,1,37.52,31.57
+Jordan,unmarried,1,95,3,0,0,37.52,31.57
+Lebanon,divorce,48,9,28,13,2,36.1,33.53
+Lebanon,affair,0,92,3,3,2,36.1,33.53
+Lebanon,unmarried,5,81,8,3,2,36.1,33.53
+Palest. ter.,divorce,27,23,27,22,1,35.1,31.35
+Palest. ter.,affair,1,94,4,1,1,35.1,31.35
+Palest. ter.,unmarried,1,94,4,0,1,35.1,31.35
+Tunisia,divorce,16,46,22,15,1,10.11,36.5
+Tunisia,affair,3,90,4,3,1,10.11,36.5
+Tunisia,unmarried,4,89,3,2,1,10.11,36.5
+Israel,divorce,33,23,34,11,0,34.0,31.71
+Israel,affair,11,73,13,3,1,34.0,31.71
+Israel,unmarried,36,37,22,3,2,34.0,31.71
+Australia,divorce,43,9,43,3,1,149.08,-35.15
+Australia,affair,4,79,13,3,1,149.08,-35.15
+Australia,unmarried,34,15,47,1,2,149.08,-35.15
+China,divorce,45,25,18,9,3,116.2,39.55
+China,affair,8,74,12,3,3,116.2,39.55
+China,unmarried,12,58,17,6,7,116.2,39.55
+Indonesia,divorce,20,57,10,13,0,106.49,-6.09
+Indonesia,affair,1,93,4,2,0,106.49,-6.09
+Indonesia,unmarried,1,97,1,1,0,106.49,-6.09
+Japan,divorce,55,13,27,3,2,139.46,35.42
+Japan,affair,12,69,14,1,4,139.46,35.42
+Japan,unmarried,47,21,26,2,4,139.46,35.42
+Malaysia,divorce,16,45,22,15,1,101.41,3.09
+Malaysia,affair,2,90,6,2,1,101.41,3.09
+Malaysia,unmarried,3,87,5,3,1,101.41,3.09
+Pakistan,divorce,10,73,5,12,1,73.1,33.4
+Pakistan,affair,0,92,3,0,4,73.1,33.4
+Pakistan,unmarried,0,94,2,0,3,73.1,33.4
+Philippines,divorce,25,67,7,1,0,121.03,14.4
+Philippines,affair,5,90,4,1,0,121.03,14.4
+Philippines,unmarried,20,71,7,1,0,121.03,14.4
+South Korea,divorce,32,25,29,13,1,126.58,37.33
+South Korea,affair,8,81,8,2,0,126.58,37.33
+South Korea,unmarried,27,35,29,6,2,126.58,37.33
+Argentina,divorce,60,17,20,2,1,-60,-36.3
+Argentina,affair,11,72,12,3,1,-60,-36.3
+Argentina,unmarried,45,22,27,3,2,-60,-36.3
+Bolivia,divorce,29,49,10,9,2,-68.1,-16.2
+Bolivia,affair,7,84,6,3,1,-68.1,-16.2
+Bolivia,unmarried,22,53,11,8,7,-68.1,-16.2
+Brazil,divorce,62,24,10,4,0,-47.55,-15.47
+Brazil,affair,6,84,9,1,1,-47.55,-15.47
+Brazil,unmarried,47,35,14,3,0,-47.55,-15.47
+Chile,divorce,64,17,16,1,1,-70.4,-33.24
+Chile,affair,13,67,16,3,2,-70.4,-33.24
+Chile,unmarried,54,13,26,6,2,-70.4,-33.24
+El Salvador,divorce,30,48,9,11,1,-89.1,13.4
+El Salvador,affair,4,89,4,2,0,-89.1,13.4
+El Salvador,unmarried,22,56,14,7,0,-89.1,13.4
+Mexico,divorce,41,33,16,7,3,-99.1,19.2
+Mexico,affair,9,73,12,4,2,-99.1,19.2
+Mexico,unmarried,26,44,21,7,3,-99.1,19.2
+Venezuela,divorce,58,24,8,9,1,-66.55,10.3
+Venezuela,affair,12,76,9,2,2,-66.55,10.3
+Venezuela,unmarried,61,21,13,4,2,-66.55,10.3
+Ghana,divorce,10,80,2,8,1,-0.06,5.35
+Ghana,affair,10,86,2,2,0,-0.06,5.35
+Ghana,unmarried,6,86,4,3,1,-0.06,5.35
+Kenya,divorce,17,59,13,10,1,36.48,-1.17
+Kenya,affair,8,80,7,3,1,36.48,-1.17
+Kenya,unmarried,4,79,13,3,1,36.48,-1.17
+Nigeria,divorce,12,61,12,13,1,7.32,9.05
+Nigeria,affair,7,77,12,3,1,7.32,9.05
+Nigeria,unmarried,3,77,13,6,2,7.32,9.05
+Senegal,divorce,35,32,16,17,1,-17.29,14.34
+Senegal,affair,5,68,24,2,1,-17.29,14.34
+Senegal,unmarried,6,63,26,4,1,-17.29,14.34
+South Africa,divorce,16,40,15,27,2,28.12,-25.44
+South Africa,affair,11,65,11,11,2,28.12,-25.44
+South Africa,unmarried,21,48,17,11,2,28.12,-25.44
