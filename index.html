@@ -36,13 +36,15 @@
     <script type="text/javascript">  
 
 
-
+      //colors for bars (acceptable, not acceptable, not a moral issue)
       var color = d3.scale.ordinal()
                     .range(['green','red','orange']);
 
 
       function draw(geo_data) {
+      //draw mercator map
 
+        //add header
         d3.select("body")
           .append("h2")
           .text("Global Views on Morality and Marriage");
@@ -59,9 +61,9 @@
             .append('g')
             .attr('class', 'map');
 
+        //define mercator projection (https://github.com/mbostock/d3/wiki/Geo-Projections)
         var projection = d3.geo.mercator()
                                .scale(260)
-                               .rotate([0,0,0])
                                .translate([width / 2, height / 1.35]);                    
 
         var path = d3.geo.path().projection(projection);
@@ -76,7 +78,7 @@
                      .style('stroke-width', 0.5)
                      .style("opacity",0.7);
 
-        //add text
+        //add text and color legends
           var legend = svg.append("g")
             .attr("class", "legend");
 
@@ -145,7 +147,9 @@
               .style("text-anchor", "end")
               .style("font-weight", "bold")
               .text(function(d) { return "Select a region:"; });
+        //end of adding text and legends
 
+        
         
         //Information to choose from (questions and regions):
         var questions = ["unmarried","divorce","affair"];
@@ -160,6 +164,7 @@
         var SubAfrica = ["Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
         var All = ["United States","Canada","Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India","Greece","Britain","Poland","Russia","Czech Republic","Italy","Spain","Germany","France","El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile","Palest. ter.","Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel","Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
 
+        //define current question and region to display
         var sel_question = "unmarried";
         var sel_region = "All";
       
@@ -174,9 +179,9 @@
             //filter data
             var data2 = data.filter(function(d){
 
-              return d['question'] === q;
+              return d['question'] === q; //filter question
              })
-            .filter(function(d){
+            .filter(function(d){ //filter region
               if(r === "North America"){
                 return (NorthAmerica.indexOf(d['country']) !== -1);
               } else if(r === "Asia"){
@@ -194,7 +199,8 @@
               }
             });
 
-            var answers = d3.layout.stack()(
+            //create stacked layout per country and selected question
+            var answers = d3.layout.stack()( 
             ["acceptable","unacceptable","not a moral issue"].map(function(answer){
               return data2.map(function(d){
                 return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
@@ -202,10 +208,10 @@
             })
             );
 
-            //remove all old bars
+            //remove all (old) bars
             svg.selectAll("rect").remove();
 
-
+            //Add a group for each answer
             var answer = svg.selectAll("g.answer")
                             .data(answers);
 
@@ -219,10 +225,12 @@
                     return color(i); 
                   });
           
+            //set bar width
             var bar_width = 8;
-            //Add a rect for each date
+
+            //Add stacked bars for each country
             var rect = answer.selectAll("rect")
-                             .data(Object)
+                             .data(Object)//access Object of stack model data
                              .enter()
                              .append("rect")
                              .attr("x",function(d){
@@ -238,7 +246,7 @@
                              .attr("opacity",0.7)
                              .attr("stroke",'grey')
                              .attr("stroke-width",0.7)
-                             .on("mouseover",function(d){
+                             .on("mouseover",function(d){//display number values and country information
                                 var xPos = parseFloat(d3.select(this).attr("x"));
                                 var yPos = parseFloat(d3.select(this).attr("y"));
                                 var height = parseFloat(d3.select(this).attr("height"))
@@ -254,7 +262,7 @@
                                   .attr("y",yPos +height/2)
                                   .text(d.country+": "+d.answer + ": " + d.y +"%");
                              })
-                             .on("mouseout",function(){
+                             .on("mouseout",function(){ //reset bar layout
                                 d3.select(this).attr("stroke-width",0.7)
                                                .attr("stroke","grey");  
                                 svg.select(".tooltip").remove();
@@ -332,7 +340,7 @@
 
           //set "unmarried" as default question
           var data2 = data.filter(function(d){
-            return d['question'] === "unmarried"; //first question
+            return d['question'] === sel_question; //first question
           });
           
           //create stacked layout per country and selected question
@@ -403,20 +411,18 @@
 
         }
 
-        
-        
-        //var format = d3.time.format("%d-%m-%Y (%H:%M h)");
+        //intial call of function that plots the bars
         d3.csv("data_final_geo_3.csv",plot_bars);
       };
       </script>
   </head>
 <body>
   <script type="text/javascript">
-  /*
-    Use D3 to load the GeoJSON file
-    */
-    
-    d3.json("world_countries.json", draw);
+
+    //START
+
+    //Use D3 to load the GeoJSON file
+    d3.json("world_countries.json", draw); //plots map and calls function "plot_bars"
   </script>
 </body>
 </html>
