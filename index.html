@@ -242,9 +242,12 @@
                                 var xPos = parseFloat(d3.select(this).attr("x"));
                                 var yPos = parseFloat(d3.select(this).attr("y"));
                                 var height = parseFloat(d3.select(this).attr("height"))
-                                        
                                 d3.select(this).attr("stroke-width",1)
-                                               .attr("stroke","black");             
+                                               .attr("stroke","black"); 
+
+                                if(Asia.indexOf(d['country']) !== -1){
+                                  xPos = xPos - 220;
+                                }            
                                 svg.append("text")
                                   .attr("class","tooltip")
                                   .attr("x",xPos + 20)
@@ -381,7 +384,10 @@
                                 var height = parseFloat(d3.select(this).attr("height"))
                                         
                                 d3.select(this).attr("stroke-width",1)
-                                               .attr("stroke","black");             
+                                               .attr("stroke","black");              
+                                if(Asia.indexOf(d['country']) !== -1){
+                                  xPos = xPos - 220;
+                                }                 
                                 svg.append("text")
                                   .attr("class","tooltip")
                                   .attr("x",xPos + 20)
