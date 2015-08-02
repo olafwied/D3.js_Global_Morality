@@ -5,7 +5,7 @@
   <script src="http://d3js.org/d3.v3.min.js"></script>
     <style>
     div.question_button {
-      position: fixed;
+      position: absolute;
       top: 110px;
       left: 50px;
     } 
@@ -17,9 +17,9 @@
     }
 
     div.region_button {
-      position: fixed;
-      top: 350px;
-      left: 50px;
+      position: absolute;
+      top: 85px;
+      left: 350px;
     } 
 
     div.region_button div {
@@ -28,14 +28,36 @@
       margin: 7px;
     }
 
-    h2 {
+    h3 {
         text-align: center;
         color: black;
       }
+
+    .container{
+    float: left;
+    }
+    .axis path {
+      display: none;
+    }
+    .axis line {
+      shape-rendering: crispEdges;
+      stroke: #eee;
+      stroke-opacity: 0.5;
+    }
+    .graph-svg-component {
+        /*background-color: lightGrey;*/
+        border:1px solid #000000;
+    }
     </style>
+    
+
+    <div class="container" id="area1"></div>
+    <div class="container" id="area_sep"></div>
+    <div class="container" id="area2"></div>
+
+
     <script type="text/javascript">  
-
-
+      
       //colors for bars (acceptable, not acceptable, not a moral issue)
       var color = d3.scale.ordinal()
                     .range(['green','red','orange']);
@@ -45,25 +67,94 @@
       //draw mercator map
 
         //add header
-        d3.select("body")
-          .append("h2")
-          .text("Global Views on Morality and Marriage");
+        d3.select("#area1")
+          .append("h3")
+          .text("Moral Views on Marriage in different parts of the World");
+        d3.select("#area2")
+          .append("h3")
+          .text("Regional Average");
 
         "use strict";
         var margin = 75,
-            width = 1400 - margin,
-            height = 650 - margin;
+            width = 1200 - margin,
+            height = 680 - margin;
 
-        var svg = d3.select("body")
+        var svg = d3.select("#area1")
             .append("svg")
             .attr("width", width + margin)
             .attr("height", height + margin)
             .append('g')
             .attr('class', 'map');
 
+        var svg_sep = d3.select("#area_sep")
+            .append("svg")
+            .attr("width", 10)
+            .attr("height", height + margin)
+            .append('g')
+
+
+        //for summary bar chart on the right
+        var margin2 = {top:30,left:10},
+            width2 = 200  - 2*margin2.left,
+            height2 = 680 - margin2.top;
+
+        var svg2 = d3.select("#area2")
+            .append("svg")
+            .attr("width", width2 + 2*margin2.left)
+            .attr("height", height2 + margin2.top)
+            .attr("class","graph-svg-component")
+            .append('g')
+            .attr("transform","translate("+margin2.left+","+margin2.top+")");
+
+        var y0 = d3.scale.ordinal().rangeRoundBands([height2,0],0.2);
+        var y1 = d3.scale.ordinal();
+        var x = d3.scale.linear().range([width2,0]);
+        var yAxis = d3.svg.axis()
+                      .scale(y0)
+                      .orient("left");
+        var xAxis = d3.svg.axis()
+                      .scale(x)
+                      .orient("top")
+                      .tickValues([150,80,60,40,20,0])
+                      .tickSize(-height2);
+
+        //Information to choose from (questions and regions):
+        var questions = ["unmarried","divorce","affair"];
+
+        var regions = ["All","Europe","North America","Latin America","Asia/Pacific","Sub-Saharan Africa","Middle East"];
+
+        var NorthAmerica = ["United States","Canada"];
+        var Asia = ["Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India"];
+        var Europe = ["Greece","England","Poland","Russia","Czech Republic","Italy","Spain","Germany","France"];
+        var LatinAmerica = ["El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile"];
+        var MiddleEast = ["Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel"];
+        var SubAfrica = ["Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
+        var All = ["United States","Canada","Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India","Greece","England","Poland","Russia","Czech Republic","Italy","Spain","Germany","France","El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile","Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel","Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
+
+        //(preserving ordering as in 'regions' to later access region names)
+        var regions_list = [MiddleEast,SubAfrica,Asia,LatinAmerica,NorthAmerica,Europe];
+
+        function color_countries(d){
+          if(NorthAmerica.indexOf(d.properties.name) !== -1) {
+            return "rgb(27,158,119)";
+          } else if(LatinAmerica.indexOf(d.properties.name) !== -1){
+             return "rgb(217,95,2)";
+          } else if(Asia.indexOf(d.properties.name) !== -1){
+            return "rgb(117,112,179)";
+          } else if(MiddleEast.indexOf(d.properties.name) !== -1){
+            return "rgb(5231,41,138)";
+          } else if(SubAfrica.indexOf(d.properties.name) !== -1){
+            return "rgb(102,166,30)";
+          } else if(Europe.indexOf(d.properties.name) !== -1){
+            return "rgb(230,171,2)";
+          } else {
+            return "white";
+          }
+        }
+
         //define mercator projection (https://github.com/mbostock/d3/wiki/Geo-Projections)
         var projection = d3.geo.mercator()
-                               .scale(260)
+                               .scale(240)
                                .translate([width / 2, height / 1.35]);                    
 
         var path = d3.geo.path().projection(projection);
@@ -73,9 +164,9 @@
                      .enter()
                      .append('path')
                      .attr('d', path)
-                     .style('fill', 'lightGrey')
+                     .style('fill', color_countries)
                      .style('stroke', 'black')
-                     .style('stroke-width', 0.5)
+                     .style('stroke-width', 0.7)
                      .style("opacity",0.7);
 
         //add text and color legends
@@ -107,7 +198,7 @@
           legend.append("circle")
               .attr("cx", 55)
               .attr("cy",175)
-              .attr("r", 6)
+              .attr("r", 8)
               .style("fill", 'green');
 
           legend.append("text")
@@ -119,7 +210,7 @@
           legend.append("circle")
               .attr("cx", 55)
               .attr("cy",195)
-              .attr("r", 6)
+              .attr("r", 8)
               .style("fill", 'red');
 
           legend.append("text")
@@ -131,7 +222,7 @@
           legend.append("circle")
               .attr("cx", 55)
               .attr("cy",215)
-              .attr("r", 6)
+              .attr("r", 8)
               .style("fill", 'orange');
 
           legend.append("text")
@@ -141,8 +232,8 @@
               .text(function(d) { return "not a moral issue?"; });
 
           legend.append("text")
-              .attr("x", 130)
-              .attr("y", 260)
+              .attr("x", 450)
+              .attr("y", 9)
               .attr("dy", ".35em")
               .style("text-anchor", "end")
               .style("font-weight", "bold")
@@ -151,18 +242,7 @@
 
         
         
-        //Information to choose from (questions and regions):
-        var questions = ["unmarried","divorce","affair"];
-
-        var regions = ["All","Asia","Europe","Latin America","North America", "Middle East","Sub-Saharan Africa"];
-
-        var NorthAmerica = ["United States","Canada"];
-        var Asia = ["Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India"];
-        var Europe = ["Greece","Britain","Poland","Russia","Czech Republic","Italy","Spain","Germany","France"];
-        var LatinAmerica = ["El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile"];
-        var MiddleEast = ["Palest. ter.","Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel"];
-        var SubAfrica = ["Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
-        var All = ["United States","Canada","Indonesia","Pakistan","Malaysia","Philippines","South Korea","Australia","China","Japan","India","Greece","Britain","Poland","Russia","Czech Republic","Italy","Spain","Germany","France","El Salvador","Bolivia","Brazil","Venezuela","Mexico","Argentina","Chile","Palest. ter.","Turkey","Egypt","Jordan","Lebanon","Tunisia","Israel","Ghana","Kenya","Uganda","Nigeria","Senegal","South Africa"];
+        
 
         //define current question and region to display
         var sel_question = "unmarried";
@@ -172,10 +252,148 @@
 
         function plot_bars(data) {
           //intial plotting of bars with default values sel_question and sel_region
+          
+
+          function plot_avg(data,q){
+            //clear canvas
+            svg2.selectAll("g").remove();
+
+            //compute average per region
+            var region_avg = [];
+            for (var i=0 ; i<regions_list.length ; i++) {
+                var region_filtered = data.filter(function(d){
+                return d['question'] === q; //filter question
+                }).filter(function(d){
+                  return (regions_list[i].indexOf(d['country']) !== -1);
+                });
+
+                //create stacked layout per country and selected question
+                var answers = d3.layout.stack()( 
+                ["acceptable","unacceptable","not a moral issue"].map(function(answer){
+                  return region_filtered.map(function(d){
+                    return {country: d.country, answer: answer, x: [d.longitude,d.latitude], y: +d[answer]};
+                  });
+                }));
+                
+                var answers_accpt = answers[0];
+                var answers_unaccpt = answers[1];
+                var answers_notmoral = answers[2];
+                var accpt_mean = d3.mean(answers_accpt,function(d){
+                  return d.y;
+                });
+                var unaccpt_mean = d3.mean(answers_unaccpt,function(d){
+                  return d.y;
+                });
+                var notmoral_mean = d3.mean(answers_notmoral,function(d){
+                  return d.y;
+                });
+
+                var total = accpt_mean + unaccpt_mean + notmoral_mean;
+
+                accpt_mean = 100/total*accpt_mean;
+                unaccpt_mean = 100/total*unaccpt_mean;
+                notmoral_mean = 100/total*notmoral_mean;
+
+                region_avg.push({"region":regions[regions_list.length-i],"acceptable":accpt_mean,"unacceptable":unaccpt_mean,"not a moral issue":notmoral_mean});
+            }
+
+            region_avg.forEach(function(d){
+              d.ans = ["acceptable","unacceptable","not a moral issue"].map(function(answer){
+                  return {answer:answer, value: d[answer]};
+              });
+            });
+
+            y0.domain(region_avg.map(function(d){return d.region;}));
+            y1.domain(["acceptable","unacceptable","not a moral issue"]).rangeRoundBands([0,y0.rangeBand()]);
+            x.domain([0,d3.max(region_avg,
+              function(d){return d3.max(d.ans,
+                function(d){return d.value;});
+              })]);
+
+
+            
+
+            var region = svg2.selectAll(".region")
+                             .data(region_avg)
+                             .enter()
+                             .append("g")
+                             .attr("class","g")
+                             .attr("transform",function(d){
+                              return "translate(0,"+y0(d.region) + ")";
+                             });
+
+            //highlight regions' by increasing opacity when hovering over a summary bar:                 
+            var hover_region = [];
+
+            function update_countries_opacity(d) {
+                  if(hover_region.indexOf(d.properties.name) !== -1) {
+                      return 0.9;
+                  } else {
+                      return 0.3;
+                  }
+              }
+
+            region.selectAll("rect")
+                  .data(function(d){
+                    if(d.region === "North America"){
+                      hover_region = NorthAmerica;
+                    } else if(d.region === "Asia/Pacific"){
+                      hover_region = Asia;
+                    } else if(d.region === "Europe"){
+                      hover_region = Europe;
+                    } else if(d.region === "Latin America"){
+                      hover_region = LatinAmerica;
+                    } else if(d.region === "Middle East"){
+                      hover_region = MiddleEast;
+                    } else if(d.region === "Sub-Saharan Africa"){
+                      hover_region = SubAfrica;
+                    } else if(d.region === "All"){
+                      hover_region = [];
+                    }
+                    return d.ans.map(function(d){return {answer:d.answer,value: d.value,reg:hover_region};}) //add region for highlighting during mouseover
+                  })
+                  .enter()
+                  .append("rect")
+                  .attr("height",y1.rangeBand())
+                  .attr("y",function(d){return y1(d.answer);})
+                  .attr("x",function(d){return  x(d.value);})
+                  .attr("width",function(d){return width2 - x(d.value);})
+                  .style("fill",function(d){return color(d.answer);})
+                  .on("mouseover",function(d){
+                    hover_region = d.reg;
+                    svg.selectAll('path')
+                       .transition()
+                       .duration(400)
+                       .style('opacity', update_countries_opacity);
+                  })
+                  .on("mouseout",function(d){
+                    svg.selectAll('path')
+                       .transition()
+                       .duration(400)
+                       .style('opacity', 0.7);
+                  });
+
+
+            svg2.append("g")
+                .attr("class","axis")
+                .attr("transform","translate(" + width2 + ",0)")
+                .call(yAxis);
+
+            svg2.append("g")
+                .attr("class","axis")
+                .call(xAxis)
+                .select(".tick line")
+                .style("stroke","#000");
+
+          }
+
+          plot_avg(data,sel_question);
 
           function update(data,q,r){
             //update the bars with new question (q) and region (r):
 
+
+            var countries = [];
             //filter data
             var data2 = data.filter(function(d){
 
@@ -183,21 +401,43 @@
              })
             .filter(function(d){ //filter region
               if(r === "North America"){
+                countries = NorthAmerica;
                 return (NorthAmerica.indexOf(d['country']) !== -1);
-              } else if(r === "Asia"){
+              } else if(r === "Asia/Pacific"){
+                countries = Asia;
                 return (Asia.indexOf(d['country']) !== -1);
               } else if(r === "Europe"){
+                countries = Europe;
                 return (Europe.indexOf(d['country']) !== -1);
               } else if(r === "Latin America"){
+                countries = LatinAmerica;
                 return (LatinAmerica.indexOf(d['country']) !== -1);
               } else if(r === "Middle East"){
+                countries = MiddleEast;
                 return (MiddleEast.indexOf(d['country']) !== -1);
               } else if(r === "Sub-Saharan Africa"){
+                countries = SubAfrica;
                 return (SubAfrica.indexOf(d['country']) !== -1);
               } else if(r === "All"){
+                countries = [];
                 return (All.indexOf(d['country']) !== -1);
               }
             });
+            
+            //highlight countries' stroke when clicking a region button
+            function update_countries_stroke(d) {
+                  if(countries.indexOf(d.properties.name) !== -1) {
+                      return 1.4;
+                  } else {
+                      return 0.7;
+                  }
+              }
+
+              svg.selectAll('path')
+                 .transition()
+                 .duration(400)
+                 .style('stroke-width', update_countries_stroke);
+
 
             //create stacked layout per country and selected question
             var answers = d3.layout.stack()( 
@@ -210,7 +450,6 @@
 
             //remove all (old) bars
             svg.selectAll("rect").remove();
-
             //Add a group for each answer
             var answer = svg.selectAll("g.answer")
                             .data(answers);
@@ -243,9 +482,9 @@
                               return d.y;
                              })
                              .attr("width",bar_width)
-                             .attr("opacity",0.7)
+                             .attr("opacity",0.9)
                              .attr("stroke",'grey')
-                             .attr("stroke-width",0.7)
+                             .attr("stroke-width",0.9)
                              .on("mouseover",function(d){//display number values and country information
                                 var xPos = parseFloat(d3.select(this).attr("x"));
                                 var yPos = parseFloat(d3.select(this).attr("y"));
@@ -263,7 +502,7 @@
                                   .text(d.country+": "+d.answer + ": " + d.y +"%");
                              })
                              .on("mouseout",function(){ //reset bar layout
-                                d3.select(this).attr("stroke-width",0.7)
+                                d3.select(this).attr("stroke-width",0.9)
                                                .attr("stroke","grey");  
                                 svg.select(".tooltip").remove();
                              });
@@ -273,7 +512,7 @@
 
 
           //Start>Create buttons to select a region://
-          var buttons = d3.select("body")
+          var buttons = d3.select("#area1")
                           .append("div")
                           .attr("class","region_button")
                           .selectAll("div")
@@ -291,12 +530,12 @@
             d3.select(".region_button")
               .selectAll("div")
               .transition()
-              .duration(300)
+              .duration(400)
               .style("background","rgb(34, 243, 236)");
 
             d3.select(this)
               .transition()
-              .duration(300)
+              .duration(400)
               .style("background","rgb(30,165,160)");
             sel_region = d;
             update(data,sel_question,d); //update function for new region
@@ -305,7 +544,7 @@
 
 
           //Start>Create buttons to select a question://
-          var buttons = d3.select("body")
+          var buttons = d3.select("#area1")
                           .append("div")
                           .attr("class","question_button")
                           .selectAll("div")
@@ -325,20 +564,21 @@
             d3.select(".question_button")
               .selectAll("div")
               .transition()
-              .duration(300)
+              .duration(400)
               .style("background","rgb(34, 243, 236)");
 
             d3.select(this)
               .transition()
-              .duration(300)
+              .duration(400)
               .style("background","rgb(30,165,160)");
             sel_question = d;
+            plot_avg(data,d);
             update(data,d,sel_region); //update function for new question
           });
           //End>question buttons//
 
 
-          //set "unmarried" as default question
+          //set default question
           var data2 = data.filter(function(d){
             return d['question'] === sel_question; //first question
           });
@@ -383,9 +623,9 @@
                               return d.y;
                              })
                              .attr("width",bar_width)
-                             .attr("opacity",0.7)
+                             .attr("opacity",0.9)
                              .attr("stroke",'grey')
-                             .attr("stroke-width",0.7)
+                             .attr("stroke-width",0.9)
                              .on("mouseover",function(d){ //display number values and country information
                                 var xPos = parseFloat(d3.select(this).attr("x"));
                                 var yPos = parseFloat(d3.select(this).attr("y"));
@@ -403,7 +643,7 @@
                                   .text(d.country+": "+d.answer + ": " + d.y +"%");
                              })
                              .on("mouseout",function(){ //reset bar layout
-                                d3.select(this).attr("stroke-width",0.7)
+                                d3.select(this).attr("stroke-width",0.9)
                                                .attr("stroke","grey");  
                                 svg.select(".tooltip").remove();
                              });
@@ -412,11 +652,12 @@
         }
 
         //intial call of function that plots the bars
-        d3.csv("data_final_geo_3.csv",plot_bars);
+        d3.csv("data_final_geo_5.csv",plot_bars);
       };
       </script>
   </head>
 <body>
+
   <script type="text/javascript">
 
     //START
